@@ -271,24 +271,36 @@ int main(int argc, char** argv)
 	object_templates.clear();
 
 	FeatureCloud template_cloud1;
-	template_cloud1.makeCube(0.03);
+	template_cloud1.makeCube(0.03, 0.03);
 	object_templates.push_back(template_cloud1);
 
 	FeatureCloud template_cloud2;
-	template_cloud2.makeCube(0.04);
+	template_cloud2.makeCube(0.04, 0.04);
 	object_templates.push_back(template_cloud2);
 	
 	FeatureCloud template_cloud3;
-	template_cloud3.makeCube(0.045);
+	template_cloud3.makeCube(0.045, 0.045);
 	object_templates.push_back(template_cloud3);
 
 	FeatureCloud template_cloud4;
-	template_cloud4.makeCube(0.05);
+	template_cloud4.makeCube(0.05, 0.05);
 	object_templates.push_back(template_cloud4);
 
 	FeatureCloud template_cloud5;
-	template_cloud5.makeCube(0.055);
+	template_cloud5.makeCube(0.055, 0.055);
 	object_templates.push_back(template_cloud5);
+
+	FeatureCloud template_cloud6;
+	template_cloud6.makeCube(0.04, 0.08);
+	object_templates.push_back(template_cloud6);
+
+	FeatureCloud template_cloud7;
+	template_cloud7.makeCube(0.04, 0.08);
+	object_templates.push_back(template_cloud7);
+
+	FeatureCloud template_cloud8;
+	template_cloud8.makeCube(0.035, 0.16);
+	object_templates.push_back(template_cloud8);
 
 	for (size_t i = 0; i < object_templates.size (); ++i)
 	{

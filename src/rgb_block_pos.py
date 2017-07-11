@@ -56,16 +56,17 @@ class cImageHandler:
 
         M = cv2.moments(block)
         if M['m00'] == 0:
+            print"something went wrong lol"
             return
 
         centroidx = int(M['m10']/M['m00'])
         centroidy = int(M['m01']/M['m00'])
 
-        # print "centroid:  ", centroidx, centroidy, "\n"
+        print "centroid:  ", centroidx, centroidy, "\n"
 
-        # cv2.imshow("RGB Image", cv_image)
-        # cv2.imshow("S Thresholded", threshS)
-        # cv2.waitKey(3)
+        cv2.imshow("RGB Image", cv_image)
+        cv2.imshow("S Thresholded", threshS)
+        cv2.waitKey(3)
 
         p = Point(centroidx, centroidy, 0)
         self.point_pub.publish(p)

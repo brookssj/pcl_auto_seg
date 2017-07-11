@@ -28,7 +28,7 @@ public:
     // Load and process the cloud in the given PCD file
     void loadInputCloud( const std::string &pcd_file );
 
-	void makeCube(float side_m);
+	void makeCube(float side_s, float side_l);
 
     // Get a pointer to the cloud 3D points
     PointCloud::Ptr getPointCloud() const;

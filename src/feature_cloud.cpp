@@ -28,12 +28,12 @@ void FeatureCloud::loadInputCloud(const std::string &pcd_file)
 	processInput();
 }
 
-void FeatureCloud::makeCube(float side_m)
+void FeatureCloud::makeCube(float side_s, float side_l)
 {
 	// --- Define Constants --- //
 	
-	float cubeShortSide = side_m;  // Horizontal side length (m)
-	float cubeLongSide = side_m;   // vertical side length (m)
+	float cubeShortSide = side_s;  // Horizontal side length (m)
+	float cubeLongSide = side_l; // vertical side length (m)
 	
 	// How many points on a long side (esitmate) for making test cubes, either
 	// for ICP registration or for testing fit_planes.cpp
