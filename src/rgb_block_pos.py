@@ -4,7 +4,7 @@ import sys
 import rospy
 import cv2
 import numpy as np
-from std_msgs.msg import Int32
+from std_msgs.msg import Int32, Float32
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import Point
 from cv_bridge import CvBridge, CvBridgeError
@@ -17,6 +17,7 @@ class cImageHandler:
 
     def __init__(self):
         self.point_pub = rospy.Publisher("/rgb_seg/block_location", Point, queue_size=1)
+        self.rotation_pub = rospy.Publisher(" /rgb_seg/block_rotation", Float32, queue_size=1)
         self.bridge = CvBridge()
         self.image_sub = rospy.Subscriber("/camera/rgb/image_raw", Image, self.callback)
         self.stateSub = rospy.Subscriber("/control_current_state", Int32, self.state_callback)
@@ -59,10 +60,14 @@ class cImageHandler:
             print"something went wrong lol"
             return
 
-        centroidx = int(M['m10']/M['m00'])
-        centroidy = int(M['m01']/M['m00'])
+        #centroidx = int(M['m10']/M['m00'])
+        #centroidy = int(M['m01']/M['m00'])
+        rect = cv2.minAreaRect(block)
+        centroidx = rect[0][0]
+        centroidy = rect[0][1]
+        rotation = rect [2]
 
-        print "centroid:  ", centroidx, centroidy, "\n"
+        # "centroid:  ", centroidx, centroidy, "\n"
 
         cv2.imshow("RGB Image", cv_image)
         cv2.imshow("S Thresholded", threshS)
@@ -70,6 +75,7 @@ class cImageHandler:
 
         p = Point(centroidx, centroidy, 0)
         self.point_pub.publish(p)
+        self.rotation_pub.publish(rotation)
 
 
     def draw_over_smallest_blobs(self, image):
