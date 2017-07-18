@@ -16,7 +16,7 @@ void cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input)
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
     pcl::fromROSMsg(*input, *cloud);
 
-    pcl::io::savePCDFileASCII("/home/mongeon/point_cloud.pcd", *cloud);
+    pcl::io::savePCDFileASCII("/home/rostest/point_cloud.pcd", *cloud);
 	std::cerr << "File saved!" << std::endl;
 	
     exit(0);

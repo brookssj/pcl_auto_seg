@@ -453,7 +453,7 @@ void processFile()
 	//--- Load the target cloud PCD file --- //
 	
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ>);
-	pcl::io::loadPCDFile( "/home/mongeon/block_on_floor.pcd", *cloud );
+	pcl::io::loadPCDFile( "/home/rostest/catkin_ws/block_on_floor.pcd", *cloud );
 
 
 	// --- Z-Filter And Downsample Cloud --- //
