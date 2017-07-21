@@ -47,7 +47,7 @@ class cImageHandler:
         
 
         sGauss = cv2.GaussianBlur( v, (sGauss, sGauss), 0 )
-        #cv2.imshow("sGauss", sGauss)
+        cv2.imshow("sGauss", sGauss)
         _, threshS = cv2.threshold(sGauss, sThresh, 255, cv2.THRESH_BINARY)
         threshS = self.draw_over_smallest_blobs(threshS)
     
@@ -79,14 +79,14 @@ class cImageHandler:
 
         centroidx = int(M['m10']/M['m00'])
         centroidy = int(M['m01']/M['m00'])
-        #rect = cv2.minAreaRect(block)
+        rect = cv2.minAreaRect(block)
         #centroidx = rect[0][0]
         #centroidy = rect[0][1]
 
         #epsilon = 0.1*cv2.arcLength(block,True)
         #approx = cv2.approxPolyDP(block,epsilon,True)
         #cv2.imshow("approxPoly", approx)
-        #rotation = rect [2]
+        rotation = rect [2]
 
         #cv2.imshow("RGB Image", cv_image)
 
@@ -101,7 +101,7 @@ class cImageHandler:
 
         p = Point(centroidx, centroidy, 0)
         self.point_pub.publish(p)
-        #self.rotation_pub.publish(rotation)
+        self.rotation_pub.publish(rotation)
 
 
     def draw_over_smallest_blobs(self, image):
