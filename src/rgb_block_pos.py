@@ -46,12 +46,27 @@ class cImageHandler:
         v = hsv_image[:,:,2]
         
 
-        #sGauss = cv2.medianBlur(s,5) 
         sGauss = cv2.GaussianBlur( v, (sGauss, sGauss), 0 )
-        #threshS = cv2.adaptiveThreshold(sGauss,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,\
-        #   cv2.THRESH_BINARY,11,2) 
+        #cv2.imshow("sGauss", sGauss)
         _, threshS = cv2.threshold(sGauss, sThresh, 255, cv2.THRESH_BINARY)
         threshS = self.draw_over_smallest_blobs(threshS)
+    
+        #lower_red = np.array([30,150,50])
+        #lower_red = np.array([30,150,50])
+        #upper_red = np.array([255,255,255])
+    
+        #mask = cv2.inRange(hsv_image, lower_red, upper_red)
+        #res = cv2.bitwise_and(cv_image,cv_image, mask= mask)
+        #threshS = self.draw_over_smallest_blobs(mask)
+
+        #cv2.imshow('frame',cv_image)
+        #median = cv2.medianBlur(res,15)
+        #cv2.imshow('Median Blur',median)
+        #blur = cv2.GaussianBlur(res,(15,15),0)
+        #cv2.imshow('Gaussian Blurring',blur)
+        #cv2.imshow('mask',mask)
+        #cv2.imshow('res',res)
+
 
         block = self.get_largest_blob(threshS)
         if block == None:
@@ -62,11 +77,11 @@ class cImageHandler:
         if M['m00'] == 0:
             return
 
-        #centroidx = int(M['m10']/M['m00'])
-        #centroidy = int(M['m01']/M['m00'])
-        rect = cv2.minAreaRect(block)
-        centroidx = rect[0][0]
-        centroidy = rect[0][1]
+        centroidx = int(M['m10']/M['m00'])
+        centroidy = int(M['m01']/M['m00'])
+        #rect = cv2.minAreaRect(block)
+        #centroidx = rect[0][0]
+        #centroidy = rect[0][1]
 
         #epsilon = 0.1*cv2.arcLength(block,True)
         #approx = cv2.approxPolyDP(block,epsilon,True)
@@ -80,7 +95,7 @@ class cImageHandler:
 
         # "centroid:  ", centroidx, centroidy, "\n"
 
-        cv2.imshow("RGB Image2", cv_image)
+        cv2.imshow("RGB Image", cv_image)
         cv2.imshow("S Thresholded", threshS)
         cv2.waitKey(3)
 
