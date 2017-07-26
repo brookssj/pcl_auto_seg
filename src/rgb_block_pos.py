@@ -47,10 +47,12 @@ class cImageHandler:
         
 
         sGauss = cv2.GaussianBlur( v, (sGauss, sGauss), 0 )
-        cv2.imshow("sGauss", sGauss)
-        _, threshS = cv2.threshold(sGauss, sThresh, 255, cv2.THRESH_BINARY)
+        #cv2.imshow("sGauss", sGauss)
+        #_, threshS = cv2.threshold(sGauss, sThresh, 255, cv2.THRESH_BINARY)
+        _, threshS = cv2.threshold(sGauss,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
         threshS = self.draw_over_smallest_blobs(threshS)
-    
+        #dst = cv2.fastNlMeansDenoising(sGauss,None,10,7,21)
+        #cv2.imshow("denoised", dst)
         #lower_red = np.array([30,150,50])
         #lower_red = np.array([30,150,50])
         #upper_red = np.array([255,255,255])
