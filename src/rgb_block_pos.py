@@ -82,6 +82,15 @@ class cImageHandler:
         centroidx = int(M['m10']/M['m00'])
         centroidy = int(M['m01']/M['m00'])
         rect = cv2.minAreaRect(block)
+        box = cv2.cv.BoxPoints(rect) # cv2.boxPoints(rect) for OpenCV 3.x
+        box = np.int0(box)
+        real_width = ((box[0][0] - box[1][0])**2+(box[0][1] - box[1][1])**2)**.5
+        real_height =((box[0][0] - box[3][0])**2+(box[0][1] - box[3][1])**2)**.5
+        width= abs(box[0][1]-box[1][1])
+        height = abs(box[0][0] - box[3][0])
+        #print(int(real_height), int(real_width))
+        cv2.drawContours(cv_image,[box],0,(0,0,255),2)
+
         #centroidx = rect[0][0]
         #centroidy = rect[0][1]
 
@@ -93,7 +102,7 @@ class cImageHandler:
         #cv2.imshow("RGB Image", cv_image)
 
         x,y,w,h = cv2.boundingRect(block)
-        cv2.rectangle(cv_image,(x,y),(x+w,y+h),(0,255,0),2)
+        #cv2.rectangle(cv_image,(x,y),(x+w,y+h),(0,255,0),2)
 
         # "centroid:  ", centroidx, centroidy, "\n"
 
