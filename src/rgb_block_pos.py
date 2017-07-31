@@ -4,7 +4,7 @@ import sys
 import rospy
 import cv2
 import numpy as np
-from std_msgs.msg import Int32, Float32
+from std_msgs.msg import Int32, Float32, Bool
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import Point
 from cv_bridge import CvBridge, CvBridgeError
@@ -18,6 +18,7 @@ class cImageHandler:
     def __init__(self):
         self.point_pub = rospy.Publisher("/rgb_seg/block_location", Point, queue_size=1)
         self.rotation_pub = rospy.Publisher("/rgb_seg/block_rotation", Float32, queue_size=1)
+        self.dimensions_pub = rospy.Publisher("/rgb_seg/block_dimension", Bool, queue_size=1)
         self.bridge = CvBridge()
         self.image_sub = rospy.Subscriber("/camera/rgb/image_raw", Image, self.callback)
         self.stateSub = rospy.Subscriber("/control_current_state", Int32, self.state_callback)
@@ -61,13 +62,6 @@ class cImageHandler:
         #res = cv2.bitwise_and(cv_image,cv_image, mask= mask)
         #threshS = self.draw_over_smallest_blobs(mask)
 
-        #cv2.imshow('frame',cv_image)
-        #median = cv2.medianBlur(res,15)
-        #cv2.imshow('Median Blur',median)
-        #blur = cv2.GaussianBlur(res,(15,15),0)
-        #cv2.imshow('Gaussian Blurring',blur)
-        #cv2.imshow('mask',mask)
-        #cv2.imshow('res',res)
 
 
         block = self.get_largest_blob(threshS)
@@ -88,7 +82,10 @@ class cImageHandler:
         real_height =((box[0][0] - box[3][0])**2+(box[0][1] - box[3][1])**2)**.5
         width= abs(box[0][1]-box[1][1])
         height = abs(box[0][0] - box[3][0])
-        #print(int(real_height), int(real_width))
+        if (real_width > real_height):
+            self.dimensions_pub.publish(True)
+        else:
+            self.dimensions_pub.publish(False)
         cv2.drawContours(cv_image,[box],0,(0,0,255),2)
 
         #centroidx = rect[0][0]
