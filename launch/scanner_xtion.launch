@@ -1,0 +1,10 @@
+<launch>
+	<arg name="depthimage_topic" default="/camera_base/depth/image_raw" />
+	<arg name="depthimage_output_frame_id" default="/camera_base_link" />
+	<node name="depthimage_to_laserscan" type="depthimage_to_laserscan" pkg="depthimage_to_laserscan" output="screen" args="image:=$(arg depthimage_topic) scan:=/base_scan _output_frame_id:=$(arg depthimage_output_frame_id)" />
+
+	<node pkg="tf" type="static_transform_publisher" name="camera_base_link_broadcaster" args="-0.1 0 0 0 0 0 1 base_laser_front_link camera_base_link 100" />
+
+	<node pkg="tf" type="static_transform_publisher" name="camera_interim_link_broadcaster" args="0.09 0.0 0 0 -1.5708 0 gripper_palm_link camera_interim_link 100" />
+	<node pkg="tf" type="static_transform_publisher" name="camera_link_broadcaster" args="0.0 0 0 0 0 3.14159 camera_interim_link camera_link 100" />
+</launch>
