@@ -116,6 +116,7 @@ add_executable(seg_block
   src/template_alignment.cpp
   src/feature_cloud.cpp)
 add_executable(floor_normal_pub src/floor_normal_pub.cpp)
+add_executable(pixel_to_tf src/pixel_to_tf.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
