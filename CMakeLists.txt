@@ -151,6 +151,12 @@ target_link_libraries(floor_normal_pub
   libvtkFiltering.so
 )
 
+target_link_libraries(pixel_to_tf
+  ${catkin_LIBRARIES}
+  libvtkCommon.so
+  libvtkFiltering.so
+)
+
 #############
 ## Install ##
 #############
