@@ -23,6 +23,7 @@
 
 #include <vector>
 #include <iostream>
+#include <typeinfo>
 
 //--Declarations--//
 ros::Publisher point_pub;
@@ -34,20 +35,22 @@ int v;
 int controllerState = 0;
 
 
-void pixelTo3DPoint(const sensor_msgs::PointCloud2 pCloud, const int u, const int v, geometry_msgs::Point &p)
+void pixelTo3DPoint(const sensor_msgs::PointCloud2ConstPtr& input)
 {
-  if (controllerState != 4)
-    return;
+  pCloud = *input;
 
+  const int u = 320;
+  const int v = 320;
   // get width and height of 2D point cloud data
   int width = pCloud.width;
   int height = pCloud.height;
-  std::cout << "w: " << width << " h:" << height << std::endl;
+  //std::cout << "w: " << width << " h:" << height << std::endl;
 
   // Convert from u (column / width), v (row/height) to position in array
   // where X,Y,Z data starts
+  //std::cout << "row_step: " << pCloud.row_step << " point_step: " << pCloud.point_step << std::endl;
   int arrayPosition = v*pCloud.row_step + u*pCloud.point_step;
-  std::cout << "array position: " << arrayPosition << std::endl;
+  //std::cout << "array position: " << arrayPosition << std::endl;
 
 
   // compute position in array where x,y,z data start
@@ -60,49 +63,50 @@ void pixelTo3DPoint(const sensor_msgs::PointCloud2 pCloud, const int u, const in
   float Y = 0.0;
   float Z = 0.0;
 
+
+  std::cout << typeid(X).name() << std::endl;
+  std::cout << typeid(pCloud.data[arrayPosX]).name() << std::endl;
+  std::cout << "size of data: " << pCloud.data.size() << " , " << sizeof(pCloud.data) << std::endl;
+
   memcpy(&X, &pCloud.data[arrayPosX], sizeof(float));
   memcpy(&Y, &pCloud.data[arrayPosY], sizeof(float));
   memcpy(&Z, &pCloud.data[arrayPosZ], sizeof(float));
-  std::cout << "x: " << pCloud.data[arrayPosX] << " y: " << pCloud.data[arrayPosY] << " z: " << pCloud.data[arrayPosZ] << std::endl;
 
+  // for (int j=0; j < pCloud.row_step*pCloud.height; ++j){
+  //  std::cout << "x: " << pCloud.data[j] << " y: " << pCloud.data[j] << " z: " << pCloud.data[j] << std::endl;  
+  // }
+  std::cout << typeid(X).name() << std::endl;
+  std::cout << typeid(pCloud.data[arrayPosX]).name() << std::endl;
+  std::cout << "x: " << pCloud.data[arrayPosX] << " y: " << pCloud.data[arrayPosY] << " z: " << pCloud.data[arrayPosZ] << std::endl;
+  std::cout << "x: " << X << " y: " << Y << " z: " << Z << std::endl;
+
+  if (pCloud.is_dense) std::cout << "Dense point cloud \n";
+  if (!pCloud.is_dense) std::cout << "Not dense point cloud \n";
 
   p.x = X;
-  p.y = Y;
-  p.z = Z;
+  p.y = float(pCloud.data[arrayPosY]);
+  p.z = int(Z);
 
   point_pub.publish(p);
 
 }
 
-const sensor_msgs::PointCloud2 getPcloud() 
-{
-  return pCloud;  
-}
+// const sensor_msgs::PointCloud2 getPcloud() 
+// {
+//  return pCloud;  
+// }
 
-void cloud_cb(const sensor_msgs::PointCloud2ConstPtr& input)
-{
-  /*pcl::PointCloud<pcl::PointXYZ>::Ptr cloud( new pcl::PointCloud<pcl::PointXYZ> );
-    pcl::fromROSMsg( *input, *cloud );
-    sensor_msgs::PointCloud2 toPub;
-    pcl::toROSMsg( *cloud, toPub );
-  pCloud = toPub;*/
-  pCloud=*input;
-  cloud_pub.publish(pCloud);
-}
-
-void pixel_cb(geometry_msgs::Point pixel_point)
-{
-  u = pixel_point.x;
-  v = pixel_point.y;
-  //std::cout << "u: " << u << " v: " << v << std::endl;
-  pCloud = getPcloud();
-  pixelTo3DPoint(pCloud, u, v, p);
-}
-
-void current_state_cb( const std_msgs::Int32& state )
-{
-  controllerState = state.data;
-}
+// void cloud_cb(const sensor_msgs::PointCloud2ConstPtr& input)
+// {
+//  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud( new pcl::PointCloud<pcl::PointXYZ> );
+//     pcl::fromROSMsg( *input, *cloud );
+//     sensor_msgs::PointCloud2 toPub;
+//     pcl::toROSMsg( *cloud, toPub );
+//  pCloud = toPub;
+//  pCloud=*input;
+//  cloud_pub.publish(pCloud);
+// }
+// }
 
 int main(int argc, char** argv)
 {
@@ -110,18 +114,10 @@ int main(int argc, char** argv)
     ros::init (argc, argv, "block_tf");
     ros::NodeHandle nh;
 
-    //Creat a publisher for block point
-    point_pub = nh.advertise<geometry_msgs::Point>("/block_point", 1);
-  cloud_pub = nh.advertise<sensor_msgs::PointCloud2>("/cloud", 1);
-
-
     // Create a ROS subscriber for the input point cloud and block pixel location
-    ros::Subscriber sub = nh.subscribe ("camera/depth_registered/points", 1, cloud_cb);
-    ros::Subscriber pixel_sub = nh.subscribe ("/rgb_seg/block_location", 1, pixel_cb);
+    point_pub = nh.advertise<geometry_msgs::Point>("/block_point", 1);
+    ros::Subscriber sub = nh.subscribe ("camera/depth_registered/points", 1, pixelTo3DPoint);
 
-    // Create a subscriber for the current state
-    ros::Subscriber stateSub = nh.subscribe("/control_current_state", 1, current_state_cb );
- 
     // Spin
     ros::spin();
 }

@@ -80,8 +80,6 @@ class cImageHandler:
         box = np.int0(box)
         real_width = ((box[0][0] - box[1][0])**2+(box[0][1] - box[1][1])**2)**.5
         real_height =((box[0][0] - box[3][0])**2+(box[0][1] - box[3][1])**2)**.5
-        width= abs(box[0][1]-box[1][1])
-        height = abs(box[0][0] - box[3][0])
         if (real_width > real_height):
             self.dimensions_pub.publish(True)
         else:
