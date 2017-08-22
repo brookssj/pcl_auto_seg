@@ -7,6 +7,7 @@
 #include <tf/LinearMath/Vector3.h>
 #include <tf/LinearMath/Matrix3x3.h>
 #include <geometry_msgs/Pose.h>
+#include <geometry_msgs/PointStamped.h>
 
 #include <Eigen/Core>
 #include <pcl/point_types.h>
@@ -34,6 +35,7 @@
 
 ros::Publisher pub;
 ros::Publisher cloud_pub;
+ros::Publisher pub1;
 pcl::visualization::PCLVisualizer::Ptr visualizer_o_Ptr;
 
 typedef pcl::PointCloud<pcl::PointXYZ>::Ptr PointCloudPtr;
@@ -245,7 +247,14 @@ void cloud_cb( const sensor_msgs::PointCloud2ConstPtr& input )
 	pose.position.z = t.getZ();
 	
 	std::cerr << "Publishing" << std::endl;
-	pub.publish(pose);
+	pub1.publish(pose);
+	geometry_msgs::PointStamped point;
+	point.header.frame_id = "camera_rgb_optical_frame";
+    point.header.stamp = ros::Time();
+    point.point.x = float(t.getX());
+ 	point.point.y = float(t.getY());
+    point.point.z = float(t.getZ());
+    pub.publish(point);
 
 	sensor_msgs::PointCloud2 toPub;
     pcl::toROSMsg( *filteredScene, toPub );
@@ -312,7 +321,8 @@ int main(int argc, char** argv)
 	//visualizer_o_Ptr = pcl::visualization::PCLVisualizer::Ptr(new pcl::visualization::PCLVisualizer());
 
     // Create a ROS publisher for the pose of the block relative to the ASUS.
-    pub = nh.advertise<geometry_msgs::Pose>("/block_pose", 1);
+    pub1 = nh.advertise<geometry_msgs::Pose>("/block_pose", 1);
+    pub = nh.advertise<geometry_msgs::PointStamped>("/block_point", 1);
 	cloud_pub = nh.advertise<sensor_msgs::PointCloud2>("/filtered_cloud", 1);
 
     // Create a ROS subscriber for the input point cloud

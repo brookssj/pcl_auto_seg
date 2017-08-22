@@ -32,7 +32,7 @@ class cImageHandler:
     def callback(self, data):
         global controllerState
 
-        if controllerState != 4:
+        if controllerState != 1:
             return
 
         sGauss = 5

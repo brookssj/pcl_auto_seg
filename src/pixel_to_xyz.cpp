@@ -9,6 +9,7 @@
 #include <sensor_msgs/PointCloud2.h>
 #include <sensor_msgs/CameraInfo.h>
 #include <geometry_msgs/PointStamped.h>
+#include <std_msgs/Int32.h>
 
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -21,13 +22,15 @@ Code include methods derived from:
 */
 
 //--Declarations--//
+int controllerState = 0;
 sensor_msgs::PointCloud2 pCloud_global;
 ros::Publisher point_pub;
 cv::Mat cameraMatrix(3,3,cv::DataType<double>::type);
 cv::Mat distCoeffs(5,1,cv::DataType<double>::type);
 
-std::string robot_frame_global = "camera_link";
-std::string camera_frame_global = "camera_link";
+std::string robot_frame_global = "arm_link_0";//"camera_link";
+std::string camera_frame_global = "camera_depth_optical_frame";//"camera_link";
+double object_height_global =  -0.080; //-0.0687; //-0.0167221; //in m, from arm_link_0 frame //-0.035;
 
 void transformCameraToRobot(geometry_msgs::PointStamped &camera_point,
   geometry_msgs::PointStamped &arm_link_point);
@@ -46,6 +49,8 @@ void cloud_cb(const sensor_msgs::PointCloud2ConstPtr& input);
 void pixel_cb(geometry_msgs::Point pixel_point);
 
 void camera_info_cb(const sensor_msgs::CameraInfo input);
+
+void current_state_cb(const std_msgs::Int32& state );
 
 const sensor_msgs::PointCloud2 getPcloud() {return pCloud_global;}
 
@@ -70,6 +75,10 @@ int main(int argc, char** argv)
   // Create a ROS subscriber for the camera calibration info
   ros::Subscriber camera_info_sub = nh.subscribe (
     "/camera/rgb/camera_info", 1, camera_info_cb);
+
+  //Creat a ROS subscriber for the current state
+  ros::Subscriber current_state = nh.subscribe (
+    "control_current_state", 1, current_state_cb);
 
   // Spin
   ros::spin();
@@ -143,7 +152,7 @@ ROS_WARN("Points added %d", points_added);
   double s;
   tempMat = rotationMatrix.inv() * cameraMatrix.inv() * uvPoint;
   tempMat2 = rotationMatrix.inv() * tvec;
-  s = 0.2 + tempMat2.at<double>(2,0); //0. represents the height
+  s = object_height_global + tempMat2.at<double>(2,0); //0. represents the height
   s /= tempMat.at<double>(2,0);
 
 ROS_WARN("Projection variable %.4f", s);
@@ -238,8 +247,16 @@ ROS_WARN("Point available");
     transformCameraToRobot(camera_point, arm_link_point);
   }
 
-  // publish the point
-  point_pub.publish(arm_link_point);
+  if (controllerState == 1)
+  { 
+    // publish the point
+    point_pub.publish(arm_link_point);
+  }
+}
+
+void current_state_cb( const std_msgs::Int32& state )
+{
+  controllerState = state.data;
 }
 
 void cloud_cb(const sensor_msgs::PointCloud2ConstPtr& input)
