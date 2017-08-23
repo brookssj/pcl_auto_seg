@@ -120,6 +120,7 @@ add_executable(seg_block
 add_executable(floor_normal_pub src/floor_normal_pub.cpp)
 add_executable(pixel_to_xyz src/pixel_to_xyz.cpp)
 add_executable(pixel_to_tf src/pixel_to_tf.cpp)
+add_executable(joint_state src/joint_state.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
@@ -165,6 +166,10 @@ target_link_libraries(pixel_to_xyz
   libvtkCommon.so
   libvtkFiltering.so
   ${OpenCV_LIBRARIES}
+)
+
+target_link_libraries(joint_state
+  ${catkin_LIBRARIES}
 )
 
 #############

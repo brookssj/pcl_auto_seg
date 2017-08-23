@@ -76,7 +76,7 @@ int main(int argc, char** argv)
   ros::Subscriber camera_info_sub = nh.subscribe (
     "/camera/rgb/camera_info", 1, camera_info_cb);
 
-  //Creat a ROS subscriber for the current state
+  //Create a ROS subscriber for the current state
   ros::Subscriber current_state = nh.subscribe (
     "control_current_state", 1, current_state_cb);
 
