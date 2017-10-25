@@ -6,6 +6,6 @@
 	<node pkg="tf" type="static_transform_publisher" name="camera_base_link_broadcaster" args="-0.1 0 0 0 0 0 1 base_laser_front_link camera_base_link 100" />
 
 	<node pkg="tf" type="static_transform_publisher" name="camera_interim_link_broadcaster" args="0.09 0.0 0 0 -1.5708 0 gripper_palm_link camera_interim_link 100" />
-	<node pkg="tf" type="static_transform_publisher" name="camera_interim_2_link_broadcaster" args="0.0 0.0 0 0.0 -0.23 0. camera_interim_link camera_interim_2_link 100" />
+	<node pkg="tf" type="static_transform_publisher" name="camera_interim_2_link_broadcaster" args="0.0 0.0 0 0.0 -.23 -.1 camera_interim_link camera_interim_2_link 100" />
 	<node pkg="tf" type="static_transform_publisher" name="camera_link_broadcaster" args="0.0 0 0 0 0 3.14159 camera_interim_2_link camera_link 100" />
 </launch>
